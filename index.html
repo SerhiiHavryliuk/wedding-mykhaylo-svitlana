@@ -1355,7 +1355,7 @@
         </div>
   
         <div class="field-group">
-          <label class="field-label" for="f-wish">4. Побажання молодятам</label>
+          <label class="field-label" for="f-wish">3. Побажання молодятам</label>
           <textarea id="f-wish" placeholder="Пишіть від душі 🤍"></textarea>
         </div>
 
@@ -1477,13 +1477,7 @@
     function submitRSVP() {
       var guestSource = document.getElementById('f-guest-source').value;
       
-      /* Збір обраних напоїв */
-      var drinkEls = document.querySelectorAll('input[name="drinks"]:checked');
-      var drinksArray = [];
-      drinkEls.forEach(function(el) { drinksArray.push(el.value); });
-      var drinks = drinksArray.join(', ');
-
-      /* Збір обраної їжі */
+      /* Збір обраних варіантів (напої тепер у полі food) */
       var foodEls = document.querySelectorAll('input[name="food"]:checked');
       var foodArray = [];
       foodEls.forEach(function(el) { foodArray.push(el.value); });
@@ -1492,8 +1486,7 @@
       var wish = document.getElementById('f-wish').value.trim();
 
       if (!attend) { showToast('Будь ласка, оберіть, чи зможете ви приєднатись'); return; }
-      if (attend === 'yes' && drinksArray.length === 0) { showToast('Будь ласка, оберіть напої'); return; }
-      if (attend === 'yes' && foodArray.length === 0) { showToast('Будь ласка, оберіть переваги в їжі'); return; }
+      if (attend === 'yes' && foodArray.length === 0) { showToast('Будь ласка, оберіть напої'); return; }
 
       var btn = document.getElementById('submit-btn');
       btn.disabled = true;
@@ -1504,7 +1497,7 @@
         guest: guestSource,
         name: guestSource,
         attend: attend === 'yes' ? 'Так' : 'Ні',
-        drinks: drinks || 'Не вказано',
+        drinks: food || 'Не вказано',
         food: food || 'Не вказано',
         wish: wish || '-'
       };
