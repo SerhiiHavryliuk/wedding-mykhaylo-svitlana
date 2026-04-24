@@ -1353,9 +1353,28 @@
             </label>
           </div>
         </div>
-
         <div class="field-group">
-          <label class="field-label" for="f-wish">3. Побажання молодятам</label>
+          <label class="field-label">3. Ваші переваги в їжі: *</label>
+          <div class="checkbox-group">
+            <label class="checkbox-item">
+              <input type="checkbox" name="food" value="М’ясо">
+              <span class="checkbox-custom"></span>
+              М’ясо
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="food" value="Риба">
+              <span class="checkbox-custom"></span>
+              Риба
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="food" value="Вегетаріанське">
+              <span class="checkbox-custom"></span>
+              Вегетаріанське
+            </label>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="f-wish">4. Побажання молодятам</label>
           <textarea id="f-wish" placeholder="Пишіть від душі 🤍"></textarea>
         </div>
 
@@ -1483,10 +1502,17 @@
       drinkEls.forEach(function(el) { drinksArray.push(el.value); });
       var drinks = drinksArray.join(', ');
 
+      /* Збір обраної їжі */
+      var foodEls = document.querySelectorAll('input[name="food"]:checked');
+      var foodArray = [];
+      foodEls.forEach(function(el) { foodArray.push(el.value); });
+      var food = foodArray.join(', ');
+
       var wish = document.getElementById('f-wish').value.trim();
 
       if (!attend) { showToast('Будь ласка, оберіть, чи зможете ви приєднатись'); return; }
       if (attend === 'yes' && drinksArray.length === 0) { showToast('Будь ласка, оберіть напої'); return; }
+      if (attend === 'yes' && foodArray.length === 0) { showToast('Будь ласка, оберіть переваги в їжі'); return; }
 
       var btn = document.getElementById('submit-btn');
       btn.disabled = true;
@@ -1498,6 +1524,7 @@
         name: guestSource,
         attend: attend === 'yes' ? 'Так' : 'Ні',
         drinks: drinks || 'Не вказано',
+        food: food || 'Не вказано',
         wish: wish || '-'
       };
 
