@@ -1318,7 +1318,7 @@
 
       <div id="rsvp-form">
         <!-- Hidden field for guest identification -->
-        <input type="hidden" id="f-guest-source" value="" />
+        <input type="hidden" id="f-guest-source" value="мама і тато" />
 
         <div class="field-group">
           <label class="field-label">1. Чи зможете приєднатись до святкування разом з нами? *</label>
@@ -1495,6 +1495,7 @@
       var payload = {
         timestamp: new Date().toLocaleString('uk-UA'),
         guest: guestSource,
+        name: guestSource,
         attend: attend === 'yes' ? 'Так' : 'Ні',
         drinks: drinks || 'Не вказано',
         wish: wish || '-'
