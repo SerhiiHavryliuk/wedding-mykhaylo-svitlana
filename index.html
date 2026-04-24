@@ -40,9 +40,8 @@
      ШРИФТИ
      ═══════════════════════════════════════════════════════════ -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Sacramento&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap"
-    rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     /* ─── Reset & Base ─────────────────────────────────────────── */
@@ -67,9 +66,9 @@
       --green-lt: #EAF2EC;
       --red: #8B1A1A;
       --red-lt: #F5E8E8;
-      --script: 'Sacramento', cursive;
-      --serif: 'Cormorant Garamond', Georgia, serif;
-      --sans: 'Jost', system-ui, sans-serif;
+      --script: 'Great Vibes', cursive;
+      --serif: 'Cormorant Garamond', serif;
+      --sans: system-ui, sans-serif;
       --radius: 10px;
       --radius-lg: 16px;
     }
@@ -121,39 +120,42 @@
     }
 
     .hero-photo-content {
-      position: relative;
+      position: absolute;
+      top: 16px;
       z-index: 2;
       text-align: center;
-      padding: 0 2rem 3.5rem;
+      padding: 3rem 1rem 1rem;
       width: 100%;
     }
 
     .hero-photo-label {
       font-size: 10px;
-      letter-spacing: 5px;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.85);
+      letter-spacing: 1px;
+  
       font-weight: 300;
       margin-bottom: 0.8rem;
-      font-family: var(--sans);
+      font-family: var(--script);
+      font-size: 34px;
+      color: var(--accent);
     }
 
     .hero-names {
-      font-family: var(--script);
-      font-size: clamp(54px, 16vw, 88px);
+      /* font-family: var(--script); */
+       font-family: var(--serif);
+      font-size: clamp(24px, 12vw, 52px);
       font-weight: 400;
       line-height: 1.05;
-      color: #fff;
-      text-shadow:
+      color: var(--accent);
+      /* text-shadow:
         0 2px 12px rgba(139, 26, 26, 0.4),
-        0 1px 3px rgba(0, 0, 0, 0.5);
+        0 1px 3px rgba(0, 0, 0, 0.5); */
       letter-spacing: 1px;
     }
 
     .hero-names .line-amp {
       display: block;
       font-size: clamp(40px, 12vw, 64px);
-      color: rgba(255, 255, 255, 0.92);
+      color: var(--accent);
       margin-top: -0.1em;
     }
 
@@ -545,7 +547,7 @@
 
     .wishes-signature {
       font-family: var(--script);
-      font-size: clamp(32px, 8vw, 24px);
+      font-size: clamp(28px, 8vw, 42px);
       color: var(--accent);
       line-height: 1.2;
     }
@@ -909,8 +911,68 @@
     }
 
     .submit-btn:disabled {
-      opacity: 0.5;
+      opacity: 0.6;
       cursor: not-allowed;
+    }
+
+    /* ─── Checkboxes ─────────────────────────────────────────── */
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      text-align: left;
+      margin-top: 1.2rem;
+      padding: 0 5px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      font-family: var(--serif);
+      font-size: 17px;
+      color: var(--text-mid);
+      user-select: none;
+      line-height: 1.2;
+    }
+
+    .checkbox-item input {
+      display: none;
+    }
+
+    .checkbox-custom {
+      width: 24px;
+      height: 24px;
+      border: 1px solid var(--ivory-dark);
+      border-radius: 6px;
+      position: relative;
+      background: #fff;
+      transition: all 0.25s ease;
+      flex-shrink: 0;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    .checkbox-item:hover .checkbox-custom {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .checkbox-item input:checked + .checkbox-custom {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 3px 8px rgba(139, 26, 26, 0.2);
+    }
+
+    .checkbox-item input:checked + .checkbox-custom::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-size: 15px;
+      font-weight: bold;
     }
 
     /* ─── Success ───────────────────────────────────────────────── */
@@ -1071,22 +1133,22 @@
       </div>
 
       <!-- Decorative: big heart left -->
-      <div class="deco-heart-left">
+      <!-- <div class="deco-heart-left">
         <svg width="80" height="90" viewBox="0 0 80 90" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             d="M40 80 C20 65 2 52 2 34 C2 20 12 10 24 10 C31 10 37 14 40 19 C43 14 49 10 56 10 C68 10 78 20 78 34 C78 52 60 65 40 80Z"
             stroke="white" stroke-width="2.2" fill="none" stroke-linejoin="round" />
         </svg>
-      </div>
+      </div> -->
 
       <!-- Decorative: small heart above names -->
-      <div class="deco-heart-small">
+      <!-- <div class="deco-heart-small">
         <svg width="24" height="22" viewBox="0 0 24 22" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             d="M12 19 C5 13 1 9 1 5.5 C1 2.8 3 1 5.5 1 C7.5 1 9.5 2.5 12 5 C14.5 2.5 16.5 1 18.5 1 C21 1 23 2.8 23 5.5 C23 9 19 13 12 19Z"
             stroke="white" stroke-width="1.8" fill="rgba(255,255,255,0.15)" stroke-linejoin="round" />
         </svg>
-      </div>
+      </div> -->
 
       <!-- Decorative: wine glasses bottom-right -->
       <div class="deco-glasses">
@@ -1112,10 +1174,9 @@
       </div>
 
       <div class="hero-photo-content">
-        <!-- <p class="hero-photo-label">Запрошують на весілля</p> -->
+        <p class="hero-photo-label">wedding day</p>
         <h1 class="hero-names" id="names-el">
-          Михайло
-          <span class="line-amp">& Світлана</span>
+          Михайло & Світлана
         </h1>
         <p class="hero-photo-date" id="date-el"></p>
       </div>
@@ -1200,7 +1261,7 @@
     <!-- Closing phrase -->
     <p class="invite-ending">
       Ми не уявляємо<br>
-      цей радісний день без Вас —<br>
+      цей радісний день без вас —<br>
       близьких і дорогих нам людей!
     </p>
 
@@ -1216,7 +1277,7 @@
       </div>
 
       <p class="invite-eyebrow">Локація</p>
-      <p class="invite-body" style="font-style: italic; margin-bottom: 0.5rem;">Будемо раді бачити Вас за адресою:</p>
+      <p class="invite-body" style="font-style: italic; margin-bottom: 0.5rem;">Будемо раді бачити вас за адресою:</p>
 
       <div class="location-card">
         <h3 class="location-venue">Ресторан “Яхта Осещина”</h3>
@@ -1242,21 +1303,21 @@
       <div>
         <p class="wishes-intro">Для нас найважливіше - це розділити з вами радість нашого дня.</p>
 
-        <p class="wishes-alt-title">Якщо ви планували привітати нас квітами - просимо<br>розглянути приємну
+        <p class="wishes-alt-title">Якщо ви планували привітати нас квітами, просимо<br>розглянути приємну
           альтернативу:</p>
 
         <ul class="wishes-list">
           <li class="wishes-item">
             <span class="wishes-icon">🍷</span>
-            <span>Пляшка хорошого алкоголю (для нас буде цінно, якщо Ви поділитесь Вашим улюбленним)</span>
+            <span>Пляшка хорошого алкоголю (для нас буде цінно, якщо ви поділитесь Вашим улюбленним)</span>
           </li>
           <li class="wishes-item">
             <span class="wishes-icon">🕯️</span>
-            <span>ароматичну свічку, що наповнить наш дім затишком</span>
+            <span>Ароматичну свічку, що наповнить наш дім затишком</span>
           </li>
         </ul>
 
-        <p class="wishes-outro">Такі дарунки не зів’януть - а навпаки, залишать по собі приємні вечори та спогади.</p>
+        <p class="wishes-outro">Такі дарунки не зів’януть, а навпаки - залишать по собі приємні вечори та спогади.</p>
 
         <div class="wishes-signature">
           З любов’ю,<br>Михайло та Світлана
@@ -1360,19 +1421,34 @@
         </div>
 
         <div class="field-group">
-          <label class="field-label" for="f-drinks">2. Яким напоям віддаєте перевагу: *</label>
-          <select id="f-drinks">
-            <option value="" disabled selected>Оберіть варіант</option>
-            <option value="Міцний алкоголь">Міцний алкоголь</option>
-            <option value="Вино біле">Вино біле</option>
-            <option value="Вино червоне">Вино червоне</option>
-            <option value="Безалкогольні напої">Безалкогольні напої</option>
-          </select>
+          <label class="field-label">2. Яким напоям віддаєте перевагу: *</label>
+          <div class="checkbox-group">
+            <label class="checkbox-item">
+              <input type="checkbox" name="drinks" value="Міцний алкоголь">
+              <span class="checkbox-custom"></span>
+              Міцний алкоголь
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="drinks" value="Вино біле">
+              <span class="checkbox-custom"></span>
+              Вино біле
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="drinks" value="Вино червоне">
+              <span class="checkbox-custom"></span>
+              Вино червоне
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="drinks" value="Безалкогольні напої">
+              <span class="checkbox-custom"></span>
+              Безалкогольні напої
+            </label>
+          </div>
         </div>
 
         <div class="field-group">
           <label class="field-label" for="f-wish">3. Побажання молодятам</label>
-          <textarea id="f-wish" placeholder="Пишіть від душі 💛"></textarea>
+          <textarea id="f-wish" placeholder="Пишіть від душі 🤍"></textarea>
         </div>
 
         <button class="submit-btn" id="submit-btn" onclick="submitRSVP()">Надіслати відповідь</button>
@@ -1380,7 +1456,7 @@
 
       <!-- Success -->
       <div class="success-box" id="success-box">
-        <span class="success-icon">🤍</span>
+        <span class="success-icon">❤️</span>
         <div class="success-title">Дякуємо!</div>
         <div class="success-text" id="success-text"></div>
       </div>
@@ -1504,11 +1580,17 @@
 
     function submitRSVP() {
       var guestSource = document.getElementById('f-guest-source').value;
-      var drinks = document.getElementById('f-drinks').value;
+      
+      /* Збір обраних напоїв */
+      var drinkEls = document.querySelectorAll('input[name="drinks"]:checked');
+      var drinksArray = [];
+      drinkEls.forEach(function(el) { drinksArray.push(el.value); });
+      var drinks = drinksArray.join(', ');
+
       var wish = document.getElementById('f-wish').value.trim();
 
       if (!attend) { showToast('Будь ласка, оберіть, чи зможете ви приєднатись'); return; }
-      if (attend === 'yes' && !drinks) { showToast('Будь ласка, оберіть напої'); return; }
+      if (attend === 'yes' && drinksArray.length === 0) { showToast('Будь ласка, оберіть напої'); return; }
 
       var btn = document.getElementById('submit-btn');
       btn.disabled = true;
