@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Михайло & Світлана · Весілля</title>
+  <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+
+  <!-- ═══════════════════════════════════════════════════════════
+     НАЛАШТУВАННЯ — змінюй тут
+     ═══════════════════════════════════════════════════════════ -->
+  <script>
+    var CONFIG = {
+      /* Дата та час весілля (рік, місяць-1, день, година, хвилина) */
+      weddingDate: new Date(2026, 6, 4, 13, 30, 0),
+
+      /* Google Apps t URL — замінити після налаштування (інструкція нижче) */
+      sheetsUrl: "https://script.google.com/macros/s/AKfycbzntCT5PTCmRQNr_tG_iwglQuHnxnesEkn_FVy--3u5wygJYqPQbj2uoOR6upvdXr_3/exec",
+
+      /* Посилання на Google Maps (необов'язково) */
+      mapsUrl: "https://maps.app.goo.gl/4uZZ18XLSfqhKgPy9",
+
+      /* Ім'я гостя за замовчуванням (якщо не передано в URL) */
+      defaultGuest: "Денис і Настя"
+    };
+  </script>
+
+  <!-- ═══════════════════════════════════════════════════════════
+     ШРИФТИ
+     ═══════════════════════════════════════════════════════════ -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ─── Reset & Base ─────────────────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --ivory: #FAF7F2;
+      --ivory-mid: #F0EBE3;
+      --ivory-dark: #E0D8CE;
+      --text: #1A1210;
+      --text-mid: #5A4A44;
+      --text-light: #9A8880;
+      --accent: #8B1A1A;
+      --accent-lt: #C4706A;
+      --green: #4A7C59;
+      --green-lt: #EAF2EC;
+      --red: #8B1A1A;
+      --red-lt: #F5E8E8;
+      --script: 'Great Vibes', cursive;
+      --serif: 'Cormorant Garamond', serif;
+      --sans: system-ui, sans-serif;
+      --radius: 10px;
+      --radius-lg: 16px;
+    }
+
+    body {
+      font-family: var(--sans);
+      background: var(--ivory);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Page layout ──────────────────────────────────────────── */
+    .page {
+      max-width: 540px;
+      margin: 0 auto;
+      padding: 0 0 4rem;
+    }
+
+    /* ─── Hero Photo Block ─────────────────────────────────────── */
+    .hero-photo {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 600px;
+      max-height: 900px;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .hero-photo-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
+
+    .hero-photo-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom,
+          rgba(0, 0, 0, 0) 0%,
+          rgba(0, 0, 0, 0) 45%,
+          rgba(0, 0, 0, 0.38) 100%);
+    }
+
+    .hero-photo-content {
+      position: absolute;
+      top: 16px;
+      z-index: 2;
+      text-align: center;
+      padding: 3rem 1rem 1rem;
+      width: 100%;
+    }
+
+    .hero-photo-label {
+      font-size: 10px;
+      letter-spacing: 1px;
+  
+      font-weight: 300;
+      margin-bottom: 0.8rem;
+      font-family: var(--script);
+      font-size: 34px;
+      color: var(--accent);
+    }
+
+    .hero-names {
+       font-family: var(--serif);
+      font-size: clamp(24px, 12vw, 38px);
+      font-weight: 400;
+      line-height: 1.05;
+      color: var(--accent);
+      letter-spacing: 1px;
+    }
+
+    .hero-names .line-amp {
+      display: block;
+      font-size: clamp(40px, 12vw, 64px);
+      color: var(--accent);
+      margin-top: -0.1em;
+    }
+
+    .hero-photo-date {
+      display: none;
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: rgba(255, 255, 255, 0.75);
+      margin-top: 1rem;
+      font-weight: 300;
+      text-transform: uppercase;
+      font-family: var(--sans);
+    }
+
+    /* ─── Decorative SVG elements on hero ─────────────────────── */
+    .deco-heart-left {
+      position: absolute;
+      left: -8px;
+      top: 52%;
+      transform: translateY(-50%);
+      z-index: 2;
+      opacity: 0.85;
+      pointer-events: none;
+    }
+
+    .deco-heart-small {
+      position: absolute;
+      left: 50%;
+      top: 56%;
+      transform: translateX(-50%);
+      z-index: 2;
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .deco-envelope {
+      position: absolute;
+      right: 0px;
+      top: 14%;
+      z-index: 2;
+      opacity: 0.82;
+      pointer-events: none;
+    }
+
+    .deco-glasses {
+      position: absolute;
+      right: 4px;
+      bottom: 18%;
+      z-index: 2;
+      opacity: 0.82;
+      pointer-events: none;
+    }
+
+    /* ─── Hero (below photo) ───────────────────────────────────── */
+    .hero {
+      text-align: center;
+      padding: 2.5rem 2rem 1.5rem;
+      position: relative;
+    }
+
+    .hero::after {
+      content: '';
+      display: block;
+      width: 48px;
+      height: 1px;
+      background: var(--accent-lt);
+      margin: 2rem auto 0;
+    }
+
+    .hero-label {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 1.4rem;
+      font-weight: 300;
+    }
+
+    .hero-amp {
+      display: block;
+      font-family: var(--serif);
+      font-size: 0.55em;
+      color: var(--accent-lt);
+      margin: 0.3rem 0;
+      font-style: normal;
+    }
+
+    .hero-date {
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: var(--text-light);
+      margin-top: 1.5rem;
+      font-weight: 300;
+      text-transform: uppercase;
+    }
+
+    /* ─── Block 2: Invitation ─────────────────────────────────── */
+    .block-invite {
+      padding: 3rem 2rem 0;
+      text-align: center;
+    }
+
+    .invite-eyebrow {
+      font-family: var(--sans);
+      font-size: 10px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      font-weight: 300;
+      margin-bottom: 0.6rem;
+    }
+
+    .invite-section-title {
+      font-family: var(--script);
+      font-size: clamp(28px, 8vw, 42px);
+      color: var(--accent);
+      line-height: 1.1;
+      margin-bottom: 2rem;
+    }
+
+    .invite-rule {
+      width: 60px;
+      height: 0.5px;
+      background: var(--accent-lt);
+      margin: 0 auto 2rem;
+    }
+
+    .invite-dear {
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      font-weight: 300;
+      margin-bottom: 0.5rem;
+    }
+
+    .invite-names {
+      font-family: var(--script);
+      font-size: clamp(34px, 10vw, 52px);
+      color: var(--accent);
+      line-height: 1.1;
+      margin-bottom: 1.6rem;
+    }
+
+    .invite-body {
+      font-family: var(--serif);
+      font-size: clamp(15px, 4vw, 17px);
+      font-weight: 300;
+      color: var(--text-mid);
+      line-height: 1.8;
+      letter-spacing: 0.3px;
+    }
+
+    .invite-body strong {
+      font-weight: 400;
+      color: var(--text);
+    }
+
+    /* ─── Calendar ─────────────────────────────────────────────── */
+    .cal-wrap {
+      margin: 2.5rem auto 0;
+      max-width: 320px;
+      background: var(--ivory-mid);
+      border-radius: var(--radius-lg);
+      padding: 1.4rem 1.2rem 1.6rem;
+      border: 0.5px solid var(--ivory-dark);
+    }
+
+    .cal-month {
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 400;
+      text-align: center;
+      margin-bottom: 1.2rem;
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px 0;
+      text-align: center;
+    }
+
+    .cal-header {
+      font-family: var(--sans);
+      font-size: 10px;
+      letter-spacing: 1px;
+      color: var(--text-light);
+      font-weight: 400;
+      padding-bottom: 6px;
+    }
+
+    .cal-day {
+      font-family: var(--serif);
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--text-mid);
+      padding: 6px 2px;
+      position: relative;
+      line-height: 1;
+    }
+
+    .cal-day.empty {
+      color: transparent;
+      pointer-events: none;
+    }
+
+    .cal-day.heart {
+      color: #fff;
+      font-weight: 400;
+    }
+
+    .cal-day.heart::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--accent);
+      clip-path: path('M12 3.5C9.5 1 5 1.5 3 4.5C1 7.5 2 11 5 14L12 21L19 14C22 11 23 7.5 21 4.5C19 1.5 14.5 1 12 3.5Z');
+      background-color: var(--accent);
+      border-radius: 0;
+      z-index: -1;
+      /* Use SVG heart instead */
+      display: none;
+    }
+
+    /* Heart via SVG background */
+    .cal-day.heart .cal-heart-bg {
+      position: absolute;
+      inset: -2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 0;
+    }
+
+    .cal-day.heart span {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── Invite ending phrase ──────────────────────────────────── */
+    .invite-ending {
+      font-family: var(--serif);
+      font-size: clamp(15px, 4vw, 17px);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-mid);
+      line-height: 1.9;
+      text-align: center;
+      padding: 2rem 2rem 0;
+    }
+
+    /* ─── Full-width block photo ────────────────────────────────── */
+    .block-photo {
+      width: 100%;
+      margin-top: 2.5rem;
+      display: block;
+      max-height: 520px;
+      object-fit: cover;
+      object-position: center 30%;
+    }
+
+    /* ─── Block 3: Location ──────────────────────────────────── */
+    .block-location {
+      padding: 1rem 1rem 0 1rem;
+      text-align: center;
+    }
+
+    .location-card {
+      margin-top: 2rem;
+      padding: 2.2rem 1.5rem;
+      background: #fff;
+      border: 0.5px solid var(--ivory-dark);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 4px 20px rgba(139, 26, 26, 0.04);
+      position: relative;
+    }
+
+    .location-venue {
+      font-family: var(--serif);
+      font-size: 24px;
+      color: var(--accent);
+      margin-bottom: 0.8rem;
+      line-height: 1.2;
+    }
+
+    .location-address {
+      font-family: var(--sans);
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.6;
+      margin-bottom: 1.2rem;
+      font-weight: 300;
+    }
+
+    .location-time {
+      font-family: var(--sans);
+      font-size: 15px;
+      color: var(--text);
+      margin-bottom: 2.5rem;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+    }
+
+    .location-btn {
+      display: inline-block;
+      padding: 14px 28px;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      border-radius: var(--radius);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(139, 26, 26, 0.2);
+    }
+
+    .location-btn:hover {
+      background: var(--text);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    /* ─── Block 4: Wishes ────────────────────────────────────── */
+    .block-wishes {
+      padding: 1rem 2rem 3rem;
+      text-align: center;
+    }
+
+    .wishes-intro {
+      font-family: var(--serif);
+      font-size: 18px;
+      color: var(--text);
+      line-height: 1.6;
+      margin-bottom: 2.5rem;
+      font-style: italic;
+    }
+
+    .wishes-alt-title {
+      font-family: var(--sans);
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 2rem;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    .wishes-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 auto 2.5rem;
+      max-width: 420px;
+      text-align: left;
+    }
+
+    .wishes-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      margin-bottom: 1.5rem;
+      font-family: var(--serif);
+      font-size: 16px;
+      color: var(--text-mid);
+      line-height: 1.5;
+    }
+
+    .wishes-icon {
+      font-size: 22px;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: -2px;
+    }
+
+    .wishes-outro {
+      font-family: var(--serif);
+      font-size: 16px;
+      color: var(--text-mid);
+      line-height: 1.7;
+      margin-bottom: 3.5rem;
+    }
+
+    .wishes-signature {
+      font-family: var(--script);
+      font-size: clamp(28px, 8vw, 42px);
+      color: var(--accent);
+      line-height: 1.2;
+    }
+
+    /* ─── Block 5: Counter ───────────────────────────────────── */
+    .block-timer {
+      position: relative;
+      width: 100%;
+      height: 440px;
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      color: #fff;
+      text-align: center;
+    }
+
+    .timer-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      z-index: 1;
+    }
+
+    .timer-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+    }
+
+    .timer-content {
+      position: relative;
+      z-index: 3;
+      padding: 0 2rem;
+      width: 100%;
+    }
+
+    .timer-title {
+      font-family: var(--sans);
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+      opacity: 0.9;
+      font-weight: 300;
+    }
+
+    .timer-display {
+      display: flex;
+      gap: clamp(10px, 4vw, 20px);
+      justify-content: center;
+    }
+
+    .timer-unit-box {
+      min-width: clamp(60px, 18vw, 85px);
+      padding: 10px 5px;
+    }
+
+    .timer-val {
+      font-family: var(--serif);
+      font-size: clamp(42px, 11vw, 84px);
+      line-height: 1;
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 300;
+    }
+
+    .timer-label {
+      font-family: var(--sans);
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.8;
+      font-weight: 400;
+    }
+
+    /* ─── Ornament ─────────────────────────────────────────────── */
+    .ornament {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 0 2rem;
+      margin: 1.5rem 0;
+    }
+
+    .ornament-line {
+      flex: 1;
+      height: 0.5px;
+      background: var(--ivory-dark);
+    }
+
+    .ornament-leaf {
+      color: var(--accent-lt);
+      font-size: 14px;
+      user-select: none;
+    }
+
+    /* ─── Section ──────────────────────────────────────────────── */
+    .section {
+      padding: 0 2rem 1.5rem;
+    }
+
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      text-align: center;
+      margin-bottom: 1.2rem;
+      font-weight: 400;
+    }
+
+    /* ─── Timer ────────────────────────────────────────────────── */
+    .timer-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .timer-box {
+      background: #fff;
+      border: 0.5px solid var(--ivory-dark);
+      border-radius: var(--radius);
+      text-align: center;
+      padding: 16px 4px 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .timer-box::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, var(--ivory) 100%);
+      pointer-events: none;
+    }
+
+    .timer-num {
+      display: block;
+      font-family: var(--serif);
+      font-size: clamp(28px, 9vw, 40px);
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1;
+      transition: opacity 0.2s;
+    }
+
+    .timer-unit {
+      display: block;
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-top: 5px;
+      font-weight: 300;
+    }
+
+    /* ─── Details ──────────────────────────────────────────────── */
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .detail-card {
+      background: #fff;
+      border: 0.5px solid var(--ivory-dark);
+      border-radius: var(--radius);
+      padding: 14px 14px 12px;
+      cursor: default;
+      transition: border-color 0.2s;
+    }
+
+    .detail-card:hover {
+      border-color: var(--accent-lt);
+    }
+
+    .detail-card.map-link {
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      color: inherit;
+    }
+
+    .detail-card.map-link:hover .detail-val {
+      color: var(--accent);
+    }
+
+    .detail-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .detail-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--ivory-mid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .detail-title {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      font-weight: 400;
+    }
+
+    .detail-val {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.5;
+      font-weight: 300;
+      padding-left: 36px;
+      transition: color 0.2s;
+    }
+
+    /* ─── RSVP Form ────────────────────────────────────────────── */
+    .rsvp-wrap {
+      padding: 0 2rem;
+    }
+
+    .rsvp-heading {
+      font-family: var(--serif);
+      font-size: 32px;
+      font-style: italic;
+      font-weight: 300;
+      text-align: center;
+      margin-bottom: 1.6rem;
+      color: var(--text);
+    }
+
+    .field-group {
+      margin-bottom: 14px;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 7px;
+      font-weight: 400;
+    }
+
+    input[type=text],
+    input[type=tel],
+    input[type=email],
+    select,
+    textarea {
+      width: 100%;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text);
+      background: #fff;
+      border: 0.5px solid var(--ivory-dark);
+      border-radius: var(--radius);
+      padding: 11px 14px;
+      outline: none;
+      transition: border-color 0.25s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--accent-lt);
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23A09488' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+      line-height: 1.6;
+    }
+
+    /* ─── Attend buttons ────────────────────────────────────────── */
+    .attend-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .attend-btn {
+      padding: 12px 10px;
+      border: 0.5px solid var(--ivory-dark);
+      border-radius: var(--radius);
+      background: #fff;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--text-mid);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      user-select: none;
+    }
+
+    .attend-btn:hover {
+      border-color: var(--accent-lt);
+    }
+
+    .attend-btn.yes-active {
+      border-color: var(--green);
+      background: var(--green-lt);
+      color: var(--green);
+    }
+
+    .attend-btn.no-active {
+      border-color: var(--red);
+      background: var(--red-lt);
+      color: var(--red);
+    }
+
+    /* ─── Submit ────────────────────────────────────────────────── */
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--text);
+      color: var(--ivory);
+      border: none;
+      border-radius: var(--radius);
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .submit-btn:hover {
+      background: var(--accent);
+    }
+
+    .submit-btn:active {
+      transform: scale(0.99);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* ─── Checkboxes ─────────────────────────────────────────── */
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      text-align: left;
+      margin-top: 1.2rem;
+      padding: 0 5px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      font-family: var(--serif);
+      font-size: 17px;
+      color: var(--text-mid);
+      user-select: none;
+      line-height: 1.2;
+    }
+
+    .checkbox-item input {
+      display: none;
+    }
+
+    .checkbox-custom {
+      width: 24px;
+      height: 24px;
+      border: 1px solid var(--ivory-dark);
+      border-radius: 6px;
+      position: relative;
+      background: #fff;
+      transition: all 0.25s ease;
+      flex-shrink: 0;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    .checkbox-item:hover .checkbox-custom {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .checkbox-item input:checked + .checkbox-custom {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 3px 8px rgba(139, 26, 26, 0.2);
+    }
+
+    .checkbox-item input:checked + .checkbox-custom::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    /* ─── Success ───────────────────────────────────────────────── */
+    .success-box {
+      display: none;
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      background: #fff;
+      border: 0.5px solid var(--ivory-dark);
+      border-radius: var(--radius-lg);
+    }
+
+    .success-icon {
+      font-size: 36px;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .success-title {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-style: italic;
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .success-text {
+      font-size: 13px;
+      color: var(--text-mid);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    /* ─── Guest list ────────────────────────────────────────────── */
+    .guests-wrap {
+      margin-top: 2rem;
+      display: none;
+    }
+
+    .guest-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 0.5px solid var(--ivory-dark);
+      animation: slideIn 0.35s ease both;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .guest-name {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text);
+    }
+
+    .guest-sub {
+      font-size: 11px;
+      color: var(--text-light);
+      margin-top: 1px;
+    }
+
+    .g-badge {
+      font-size: 10px;
+      padding: 3px 12px;
+      border-radius: 99px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 400;
+      flex-shrink: 0;
+    }
+
+    .g-yes {
+      background: var(--green-lt);
+      color: var(--green);
+    }
+
+    .g-no {
+      background: var(--red-lt);
+      color: var(--red);
+    }
+
+    .guests-stats {
+      font-size: 11px;
+      color: var(--text-light);
+      text-align: center;
+      padding: 12px 0 0;
+      letter-spacing: 1.5px;
+    }
+
+    /* ─── Error toast ───────────────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--text);
+      color: var(--ivory);
+      font-size: 13px;
+      font-weight: 300;
+      padding: 12px 24px;
+      border-radius: 99px;
+      white-space: nowrap;
+      transition: transform 0.3s ease;
+      z-index: 999;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ─── Footer ────────────────────────────────────────────────── */
+    .footer {
+      text-align: center;
+      padding: 3rem 2rem 0;
+      font-size: 11px;
+      color: var(--text-light);
+      letter-spacing: 1px;
+      font-weight: 300;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="toast" class="toast"></div>
+
+  <div class="page">
+
+    <!-- HERO PHOTO BLOCK -->
+    <div class="hero-photo">
+      <img class="hero-photo-img" src="img/bg-block-1.webp" alt="Михайло та Світлана" />
+      <div class="hero-photo-overlay"></div>
+
+      <!-- Decorative: envelope top-right -->
+      <div class="deco-envelope">
+        <svg width="90" height="72" viewBox="0 0 90 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="10" width="78" height="56" rx="4" stroke="white" stroke-width="2.2" fill="none" />
+          <path d="M4 14 L45 42 L86 14" stroke="white" stroke-width="2.2" fill="none" stroke-linecap="round" />
+          <path d="M38 44 C40 47 42 50 45 51 C48 50 50 47 52 44" stroke="white" stroke-width="1.8" fill="none"
+            stroke-linecap="round" />
+          <!-- small heart on flap -->
+          <path d="M43 20 C43 17.5 46 16 46 19 C46 16 49 17.5 49 20 C49 22.5 46 25 46 25 C46 25 43 22.5 43 20Z"
+            stroke="white" stroke-width="1.5" fill="none" />
+        </svg>
+      </div>
+
+      <!-- Decorative: wine glasses bottom-right -->
+      <div class="deco-glasses">
+        <svg width="88" height="100" viewBox="0 0 88 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- clink lines -->
+          <path d="M36 18 L44 14" stroke="white" stroke-width="1.5" stroke-linecap="round" />
+          <path d="M38 24 L46 22" stroke="white" stroke-width="1.2" stroke-linecap="round" />
+        </svg>
+      </div>
+
+      <div class="hero-photo-content">
+        <p class="hero-photo-label">wedding day</p>
+        <h1 class="hero-names" id="names-el">
+          Михайло & Світлана
+        </h1>
+        <p class="hero-photo-date" id="date-el"></p>
+      </div>
+    </div>
+
+    <!-- ══ BLOCK 2: INVITATION ══════════════════════════════════ -->
+    <section class="block-invite">
+      <p class="invite-dear">Дорогі</p>
+      <p class="invite-names" id="invite-guest-name"></p>
+
+      <p class="invite-body">
+        Щиро запрошуємо вас на свято,<br>
+        присвячене створенню нашої сім'ї,<br>
+        яке відбудеться:
+      </p>
+
+      <!-- Calendar: July 2026 -->
+      <div class="cal-wrap">
+        <div class="cal-month">Липень 2026</div>
+        <div class="cal-grid">
+          <!-- headers -->
+          <div class="cal-header">ПН</div>
+          <div class="cal-header">ВТ</div>
+          <div class="cal-header">СР</div>
+          <div class="cal-header">ЧТ</div>
+          <div class="cal-header">ПТ</div>
+          <div class="cal-header">СБ</div>
+          <div class="cal-header">НД</div>
+          <!-- week 1: Jul 1 = Wednesday -->
+          <div class="cal-day empty"></div>
+          <div class="cal-day empty"></div>
+          <div class="cal-day">1</div>
+          <div class="cal-day">2</div>
+          <div class="cal-day">3</div>
+          <div class="cal-day heart">
+            <svg class="cal-heart-bg" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"
+              style="width:36px;height:36px;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:0;">
+              <path
+                d="M20 33C20 33 5 23 5 13.5C5 9 8.5 6 12.5 6C15.5 6 18 8 20 10.5C22 8 24.5 6 27.5 6C31.5 6 35 9 35 13.5C35 23 20 33 20 33Z"
+                fill="#8B1A1A" />
+            </svg>
+            <span style="position:relative;z-index:1;color:#fff;">4</span>
+          </div>
+          <div class="cal-day">5</div>
+          <!-- week 2 -->
+          <div class="cal-day">6</div>
+          <div class="cal-day">7</div>
+          <div class="cal-day">8</div>
+          <div class="cal-day">9</div>
+          <div class="cal-day">10</div>
+          <div class="cal-day">11</div>
+          <div class="cal-day">12</div>
+          <!-- week 3 -->
+          <div class="cal-day">13</div>
+          <div class="cal-day">14</div>
+          <div class="cal-day">15</div>
+          <div class="cal-day">16</div>
+          <div class="cal-day">17</div>
+          <div class="cal-day">18</div>
+          <div class="cal-day">19</div>
+          <!-- week 4 -->
+          <div class="cal-day">20</div>
+          <div class="cal-day">21</div>
+          <div class="cal-day">22</div>
+          <div class="cal-day">23</div>
+          <div class="cal-day">24</div>
+          <div class="cal-day">25</div>
+          <div class="cal-day">26</div>
+          <!-- week 5 -->
+          <div class="cal-day">27</div>
+          <div class="cal-day">28</div>
+          <div class="cal-day">29</div>
+          <div class="cal-day">30</div>
+          <div class="cal-day">31</div>
+          <div class="cal-day empty"></div>
+          <div class="cal-day empty"></div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Closing phrase -->
+    <p class="invite-ending">
+      Ми не уявляємо<br>
+      цей радісний день без вас —<br>
+      близьких і дорогих нам людей!
+    </p>
+
+    <!-- Block 2 photo -->
+    <img class="block-photo" src="img/block-2.webp" alt="Михайло і Світлана" />
+
+    <!-- ══ BLOCK 3: LOCATION ════════════════════════════════════ -->
+    <section class="block-location">
+      <div class="ornament">
+        <div class="ornament-line"></div>
+        <div class="ornament-leaf">✦</div>
+        <div class="ornament-line"></div>
+      </div>
+
+      <p class="invite-eyebrow">Локація</p>
+      <p class="invite-body" style="font-style: italic; margin-bottom: 0.5rem;">Будемо раді бачити вас за адресою:</p>
+
+      <div class="location-card">
+        <h3 class="location-venue">Ресторан “Яхта Осещина”</h3>
+        <p class="location-address">вул. Київська 2Г, Осещина,<br>Київська область</p>
+        <p class="location-time">Початок заходу: <strong>13:30</strong></p>
+
+        <a href="https://maps.app.goo.gl/4uZZ18XLSfqhKgPy9" class="location-btn" target="_blank" rel="noopener">
+          Переглянути на карті
+        </a>
+      </div>
+    </section>
+
+    <!-- ══ BLOCK 4: WISHES ══════════════════════════════════════ -->
+    <section class="block-wishes">
+      <div class="ornament">
+        <div class="ornament-line"></div>
+        <div class="ornament-leaf">✦</div>
+        <div class="ornament-line"></div>
+      </div>
+
+      <p class="invite-eyebrow">Побажання</p>
+
+      <div>
+        <p class="wishes-intro">Для нас найважливіше - це розділити з вами радість нашого дня.</p>
+
+        <p class="wishes-alt-title">Якщо ви планували привітати нас квітами, просимо<br>розглянути приємну
+          альтернативу:</p>
+
+        <ul class="wishes-list">
+          <li class="wishes-item">
+            <span class="wishes-icon">🍷</span>
+            <span>Пляшка хорошого алкоголю (для нас буде цінно, якщо ви поділитесь Вашим улюбленним)</span>
+          </li>
+          <li class="wishes-item">
+            <span class="wishes-icon">🕯️</span>
+            <span>Ароматичну свічку, що наповнить наш дім затишком</span>
+          </li>
+        </ul>
+
+        <p class="wishes-outro">Такі дарунки не зів’януть, а навпаки - залишать по собі приємні вечори та спогади.</p>
+
+        <div class="wishes-signature">
+          З любов’ю,<br>Михайло та Світлана
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ══ BLOCK 5: COUNTER ════════════════════════════════════ -->
+    <section class="block-timer">
+      <img class="timer-bg" src="img/bg-block-5.webp" alt="Фон таймера" />
+      <div class="timer-overlay"></div>
+
+      <div class="timer-content">
+        <p class="timer-title">До нашого весілля залишилось</p>
+        <div class="timer-display">
+          <div class="timer-unit-box">
+            <span class="timer-val" id="t-d">00</span>
+            <span class="timer-label">Днів</span>
+          </div>
+          <div class="timer-unit-box">
+            <span class="timer-val" id="t-h">00</span>
+            <span class="timer-label">Годин</span>
+          </div>
+          <div class="timer-unit-box">
+            <span class="timer-val" id="t-m">00</span>
+            <span class="timer-label">Хвилин</span>
+          </div>
+          <div class="timer-unit-box">
+            <span class="timer-val" id="t-s">00</span>
+            <span class="timer-label">Секунд</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DETAILS -->
+    <div class="ornament">
+      <div class="ornament-line"></div>
+      <div class="ornament-leaf">✦</div>
+      <div class="ornament-line"></div>
+    </div>
+
+    <!-- RSVP -->
+    <div class="rsvp-wrap">
+      <h2 class="rsvp-heading">Чи будете ви?</h2>
+
+      <div id="rsvp-form">
+        <!-- Hidden field for guest identification -->
+        <input type="hidden" id="f-guest-source" value="Денис і Настя" />
+
+        <div class="field-group">
+          <label class="field-label">1. Чи зможете приєднатись до святкування разом з нами? *</label>
+          <div class="attend-btns">
+            <div class="attend-btn" id="btn-yes" onclick="selectAttend('yes')">Так</div>
+            <div class="attend-btn" id="btn-no" onclick="selectAttend('no')">Ні</div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">2. Яким напоям віддаєте перевагу: *</label>
+          <div class="checkbox-group">
+            <label class="checkbox-item">
+              <input type="checkbox" name="food" value="Міцний алкоголь">
+              <span class="checkbox-custom"></span>
+              Міцний алкоголь
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="food" value="Вино біле">
+              <span class="checkbox-custom"></span>
+              Вино біле
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="food" value="Вино червоне">
+              <span class="checkbox-custom"></span>
+              Вино червоне
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="food" value="Безалкогольні напої">
+              <span class="checkbox-custom"></span>
+              Безалкогольні напої
+            </label>
+          </div>
+        </div>
+  
+        <div class="field-group">
+          <label class="field-label" for="f-wish">3. Побажання молодятам</label>
+          <textarea id="f-wish" placeholder="Пишіть від душі 🤍"></textarea>
+        </div>
+
+        <button class="submit-btn" id="submit-btn" onclick="submitRSVP()">Надіслати відповідь</button>
+      </div>
+
+      <!-- Success -->
+      <div class="success-box" id="success-box">
+        <span class="success-icon">❤️</span>
+        <div class="success-title">Дякуємо!</div>
+        <div class="success-text" id="success-text"></div>
+      </div>
+
+      <!-- Guest list -->
+      <div class="guests-wrap" id="guests-wrap">
+        <p class="section-label" style="margin-top:0;">Вже відповіли</p>
+        <div id="guest-rows"></div>
+        <p class="guests-stats" id="guests-stats"></p>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p id="footer-names"></p>
+    </footer>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+     LOGIC
+     ═══════════════════════════════════════════════════════════ -->
+  <script>
+    /* ── Заповнення з CONFIG ────────────────────────────────────── */
+    (function () {
+      var c = CONFIG;
+
+      /* Дата під фото */
+      var d = c.weddingDate;
+      var months = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня', 'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'];
+      var dateStr = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+      
+      var elDate = document.getElementById('date-el');
+      if (elDate) elDate.textContent = dateStr;
+
+      var elFooter = document.getElementById('footer-names');
+      if (elFooter) elFooter.textContent = 'Михайло & Світлана · ' + d.getFullYear();
+
+      var mapLink = document.getElementById('det-map-link');
+      if (mapLink) {
+        if (c.mapsUrl && c.mapsUrl !== '') {
+          mapLink.href = c.mapsUrl;
+        } else {
+          mapLink.removeAttribute('href');
+          mapLink.style.cursor = 'default';
+        }
+      }
+
+      /* Авто-підстановка імені з URL (?guest=...) або з CONFIG */
+      var urlParams = new URLSearchParams(window.location.search);
+      var guestParam = urlParams.get('guest');
+      var finalGuest = guestParam || c.defaultGuest;
+
+      /* Оновлюємо ім'я в запрошенні та в прихованому полі форми */
+      var inviteEl = document.getElementById('invite-guest-name');
+      var hiddenEl = document.getElementById('f-guest-source');
+      if (inviteEl) inviteEl.textContent = finalGuest;
+      if (hiddenEl) hiddenEl.value = finalGuest;
+    })();
+
+    /* ── Таймер ─────────────────────────────────────────────────── */
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+    function tick() {
+      var diff = CONFIG.weddingDate - new Date();
+      if (diff <= 0) {
+        /* Весілля вже відбулось — показуємо святкове повідомлення */
+        clearInterval(timerInterval);
+        var grid = document.querySelector('.timer-display') || document.querySelector('.timer-grid');
+        if (grid) {
+          grid.innerHTML =
+            '<div style="grid-column:1/-1;text-align:center;padding:1.2rem 0.5rem;width:100%;">' +
+            '<div style="font-family:var(--serif);font-size:clamp(20px,6vw,28px);font-style:italic;font-weight:300;color:inherit;line-height:1.4;">' +
+            '🤍 Цей день уже відбувся!<br>' +
+            '<span style="font-size:0.75em;opacity:0.8;">Дякуємо всім, хто був поруч</span>' +
+            '</div>' +
+            '</div>';
+        }
+        return;
+      }
+      var dEl = document.getElementById('t-d');
+      var hEl = document.getElementById('t-h');
+      var mEl = document.getElementById('t-m');
+      var sEl = document.getElementById('t-s');
+      
+      if (dEl) dEl.textContent = pad(Math.floor(diff / 86400000));
+      if (hEl) hEl.textContent = pad(Math.floor((diff % 86400000) / 3600000));
+      if (mEl) mEl.textContent = pad(Math.floor((diff % 3600000) / 60000));
+      if (sEl) sEl.textContent = pad(Math.floor((diff % 60000) / 1000));
+    }
+    tick();
+    var timerInterval = setInterval(tick, 1000);
+
+    /* ── RSVP ───────────────────────────────────────────────────── */
+    var attend = null;
+    var localGuests = [];
+
+    function selectAttend(val) {
+      attend = val;
+      document.getElementById('btn-yes').className = 'attend-btn' + (val === 'yes' ? ' yes-active' : '');
+      document.getElementById('btn-no').className = 'attend-btn' + (val === 'no' ? ' no-active' : '');
+    }
+
+    function showToast(msg) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(function () { t.classList.remove('show'); }, 3000);
+    }
+
+    function submitRSVP() {
+      var guestSource = document.getElementById('f-guest-source').value;
+      
+      /* Збір обраних варіантів (напої тепер у полі food) */
+      var foodEls = document.querySelectorAll('input[name="food"]:checked');
+      var foodArray = [];
+      foodEls.forEach(function(el) { foodArray.push(el.value); });
+      var food = foodArray.join(', ');
+
+      var wish = document.getElementById('f-wish').value.trim();
+
+      if (!attend) { showToast('Будь ласка, оберіть, чи зможете ви приєднатись'); return; }
+      if (attend === 'yes' && foodArray.length === 0) { showToast('Будь ласка, оберіть напої'); return; }
+
+      var btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Надсилаємо...';
+
+      var payload = {
+        timestamp: new Date().toLocaleString('uk-UA'),
+        guest: guestSource,
+        name: guestSource,
+        attend: attend === 'yes' ? 'Так' : 'Ні',
+        drinks: food || 'Не вказано',
+        food: food || 'Не вказано',
+        wish: wish || '-'
+      };
+
+      /* Зберігаємо локально для списку */
+      localGuests.push({ name: guestSource, attend: attend });
+      renderGuestList();
+
+      /* Відправка в Google Sheets */
+      var url = CONFIG.sheetsUrl;
+      if (url && url !== 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
+        fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).catch(function (e) { console.warn('Sheets error:', e); });
+      } else {
+        console.log('RSVP data (Google Sheets не підключено):', payload);
+      }
+
+      /* Показати success */
+      document.getElementById('rsvp-form').style.display = 'none';
+      var box = document.getElementById('success-box');
+      box.style.display = 'block';
+      document.getElementById('success-text').innerHTML =
+        attend === 'yes'
+          ? 'Ваша відповідь збережена.<br>Ми дуже раді, що ви будете з нами!'
+          : 'Ваша відповідь збережена.<br>Дякуємо, що написали — ми сумуватимемо!';
+    }
+
+    function renderGuestList() {
+      var wrap = document.getElementById('guests-wrap');
+      var rows = document.getElementById('guest-rows');
+      wrap.style.display = 'block';
+      rows.innerHTML = '';
+      var yes = 0, no = 0;
+      localGuests.forEach(function (g) {
+        g.attend === 'yes' ? yes++ : no++;
+        var r = document.createElement('div');
+        r.className = 'guest-row';
+        r.innerHTML =
+          '<div><div class="guest-name">' + g.name + '</div></div>' +
+          '<span class="g-badge ' + (g.attend === 'yes' ? 'g-yes">Так' : 'g-no">Ні') + '</span>';
+        rows.appendChild(r);
+      });
+      document.getElementById('guests-stats').textContent =
+        'Буде: ' + yes + '  ·  Не зможе: ' + no;
+    }
+  </script>
+
+  <!-- ═══════════════════════════════════════════════════════════
+
+  📋 ІНСТРУКЦІЯ: ПІДКЛЮЧЕННЯ GOOGLE SHEETS
+
+  1. Відкрий Google Sheets → створи нову таблицю
+  2. Перейди до Extensions → Apps Script
+  3. Встав наступний код у редактор і збережи:
+
+  ─────────────────────────────────────────────────
+
+  function doPost(e) {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var data  = JSON.parse(e.postData.contents);
+
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(['Час', "Ім'я", 'Телефон', 'Кількість', 'Їжа', 'Побажання', 'Відповідь']);
+    }
+
+    sheet.appendRow([
+      data.timestamp,
+      data.name,
+      data.phone,
+      data.count,
+      data.food,
+      data.wish,
+      data.attend
+    ]);
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: 'ok' }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  ─────────────────────────────────────────────────
+  4. Deploy → New deployment → Web app
+     - Execute as: Me
+     - Who has access: Anyone
+  5. Скопіюй URL деплою
+  6. Встав URL у CONFIG.sheetsUrl на початку HTML файлу
+
+  ═══════════════════════════════════════════════════════════ -->
+
+</body>
+
+</html>
