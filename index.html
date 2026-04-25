@@ -22,7 +22,7 @@
       mapsUrl: "https://maps.app.goo.gl/4uZZ18XLSfqhKgPy9",
 
       /* Ім'я гостя за замовчуванням (якщо не передано в URL) */
-      defaultGuest: "мама і тато"
+      defaultGuest: "Гість"
     };
   </script>
 
@@ -144,10 +144,10 @@
     }
 
     .hero-photo-date {
-      display: none;
+      display: block;
       font-size: 11px;
       letter-spacing: 4px;
-      color: rgba(255, 255, 255, 0.75);
+      color: var(--text-light);
       margin-top: 1rem;
       font-weight: 300;
       text-transform: uppercase;
@@ -1136,9 +1136,7 @@
 
     <!-- ══ BLOCK 2: INVITATION ══════════════════════════════════ -->
     <section class="block-invite">
-      <p class="invite-dear">Любі</p>
-      <p class="invite-names" id="invite-guest-name"></p>
-
+      
       <p class="invite-body">
         Щиро запрошуємо вас на свято,<br>
         присвячене створенню нашої сім'ї,<br>
@@ -1315,14 +1313,27 @@
 
     <!-- RSVP -->
     <div class="rsvp-wrap">
-      <h2 class="rsvp-heading">Чи будете ви?</h2>
+      <h2 class="rsvp-heading">Ваша відповідь</h2>
 
       <div id="rsvp-form">
-        <!-- Hidden field for guest identification -->
-        <input type="hidden" id="f-guest-source" value="мама і тато" />
+        <div class="field-group">
+          <label class="field-label" for="f-name">Ваше ім'я *</label>
+          <input type="text" id="f-name" placeholder="Ім'я та прізвище" autocomplete="name" />
+        </div>
 
         <div class="field-group">
-          <label class="field-label">1. Чи зможете приєднатись до святкування разом з нами? *</label>
+          <label class="field-label" for="f-count">Кількість гостей *</label>
+          <select id="f-count">
+            <option value="1">1 особа — лише я</option>
+            <option value="2">2 особи — із партнером/кою</option>
+            <option value="3">3 особи</option>
+            <option value="4">4 особи</option>
+            <option value="5+">5 і більше</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Чи зможете приєднатись? *</label>
           <div class="attend-btns">
             <div class="attend-btn" id="btn-yes" onclick="selectAttend('yes')">Так</div>
             <div class="attend-btn" id="btn-no" onclick="selectAttend('no')">Ні</div>
@@ -1330,7 +1341,7 @@
         </div>
 
         <div class="field-group">
-          <label class="field-label">2. Яким напоям віддаєте перевагу: *</label>
+          <label class="field-label">Яким напоям віддаєте перевагу: *</label>
           <div class="checkbox-group">
             <label class="checkbox-item">
               <input type="checkbox" name="food" value="Міцний алкоголь">
@@ -1356,7 +1367,7 @@
         </div>
   
         <div class="field-group">
-          <label class="field-label" for="f-wish">3. Побажання молодятам</label>
+          <label class="field-label" for="f-wish">Побажання молодятам</label>
           <textarea id="f-wish" placeholder="Пишіть від душі 🤍"></textarea>
         </div>
 
@@ -1370,12 +1381,6 @@
         <div class="success-text" id="success-text"></div>
       </div>
 
-      <!-- Guest list -->
-      <div class="guests-wrap" id="guests-wrap">
-        <p class="section-label" style="margin-top:0;">Вже відповіли</p>
-        <div id="guest-rows"></div>
-        <p class="guests-stats" id="guests-stats"></p>
-      </div>
     </div>
 
     <footer class="footer">
@@ -1391,8 +1396,6 @@
     /* ── Заповнення з CONFIG ────────────────────────────────────── */
     (function () {
       var c = CONFIG;
-
-      /* Дата під фото */
       var d = c.weddingDate;
       var months = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня', 'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'];
       var dateStr = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
@@ -1402,27 +1405,6 @@
 
       var elFooter = document.getElementById('footer-names');
       if (elFooter) elFooter.textContent = 'Михайло & Світлана · ' + d.getFullYear();
-
-      var mapLink = document.getElementById('det-map-link');
-      if (mapLink) {
-        if (c.mapsUrl && c.mapsUrl !== '') {
-          mapLink.href = c.mapsUrl;
-        } else {
-          mapLink.removeAttribute('href');
-          mapLink.style.cursor = 'default';
-        }
-      }
-
-      /* Авто-підстановка імені з URL (?guest=...) або з CONFIG */
-      var urlParams = new URLSearchParams(window.location.search);
-      var guestParam = urlParams.get('guest');
-      var finalGuest = guestParam || c.defaultGuest;
-
-      /* Оновлюємо ім'я в запрошенні та в прихованому полі форми */
-      var inviteEl = document.getElementById('invite-guest-name');
-      var hiddenEl = document.getElementById('f-guest-source');
-      if (inviteEl) inviteEl.textContent = finalGuest;
-      if (hiddenEl) hiddenEl.value = finalGuest;
     })();
 
     /* ── Таймер ─────────────────────────────────────────────────── */
@@ -1431,25 +1413,16 @@
     function tick() {
       var diff = CONFIG.weddingDate - new Date();
       if (diff <= 0) {
-        /* Весілля вже відбулось — показуємо святкове повідомлення */
         clearInterval(timerInterval);
-        var grid = document.querySelector('.timer-display') || document.querySelector('.timer-grid');
+        var grid = document.querySelector('.timer-display');
         if (grid) {
-          grid.innerHTML =
-            '<div style="grid-column:1/-1;text-align:center;padding:1.2rem 0.5rem;width:100%;">' +
+          grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:1.2rem 0.5rem;width:100%;">' +
             '<div style="font-family:var(--serif);font-size:clamp(20px,6vw,28px);font-style:italic;font-weight:300;color:inherit;line-height:1.4;">' +
-            '🤍 Цей день уже відбувся!<br>' +
-            '<span style="font-size:0.75em;opacity:0.8;">Дякуємо всім, хто був поруч</span>' +
-            '</div>' +
-            '</div>';
+            '🤍 Цей день вже відбувся!</div></div>';
         }
         return;
       }
-      var dEl = document.getElementById('t-d');
-      var hEl = document.getElementById('t-h');
-      var mEl = document.getElementById('t-m');
-      var sEl = document.getElementById('t-s');
-      
+      var dEl = document.getElementById('t-d'), hEl = document.getElementById('t-h'), mEl = document.getElementById('t-m'), sEl = document.getElementById('t-s');
       if (dEl) dEl.textContent = pad(Math.floor(diff / 86400000));
       if (hEl) hEl.textContent = pad(Math.floor((diff % 86400000) / 3600000));
       if (mEl) mEl.textContent = pad(Math.floor((diff % 3600000) / 60000));
@@ -1460,7 +1433,6 @@
 
     /* ── RSVP ───────────────────────────────────────────────────── */
     var attend = null;
-    var localGuests = [];
 
     function selectAttend(val) {
       attend = val;
@@ -1476,17 +1448,16 @@
     }
 
     function submitRSVP() {
-      var guestSource = document.getElementById('f-guest-source').value;
-      
-      /* Збір обраних варіантів (напої тепер у полі food) */
+      var name = document.getElementById('f-name').value.trim();
+      var count = document.getElementById('f-count').value;
       var foodEls = document.querySelectorAll('input[name="food"]:checked');
       var foodArray = [];
       foodEls.forEach(function(el) { foodArray.push(el.value); });
       var food = foodArray.join(', ');
-
       var wish = document.getElementById('f-wish').value.trim();
 
-      if (!attend) { showToast('Будь ласка, оберіть, чи зможете ви приєднатись'); return; }
+      if (!name) { showToast('Будь ласка, вкажіть ваше ім’я'); return; }
+      if (!attend) { showToast('Будь ласка, оберіть варіант присутності'); return; }
       if (attend === 'yes' && foodArray.length === 0) { showToast('Будь ласка, оберіть напої'); return; }
 
       var btn = document.getElementById('submit-btn');
@@ -1495,102 +1466,33 @@
 
       var payload = {
         timestamp: new Date().toLocaleString('uk-UA'),
-        guest: guestSource,
-        name: guestSource,
+        name: name,
+        guest: name,
+        count: count,
         attend: attend === 'yes' ? 'Так' : 'Ні',
         drinks: food || 'Не вказано',
         food: food || 'Не вказано',
         wish: wish || '-'
       };
 
-      /* Зберігаємо локально для списку */
-      localGuests.push({ name: guestSource, attend: attend });
-      renderGuestList();
-
-      /* Відправка в Google Sheets */
-      var url = CONFIG.sheetsUrl;
-      if (url && url !== 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
-        fetch(url, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        }).catch(function (e) { console.warn('Sheets error:', e); });
-      } else {
-        console.log('RSVP data (Google Sheets не підключено):', payload);
-      }
-
-      /* Показати success */
-      document.getElementById('rsvp-form').style.display = 'none';
-      var box = document.getElementById('success-box');
-      box.style.display = 'block';
-      document.getElementById('success-text').innerHTML =
-        attend === 'yes'
-          ? 'Ваша відповідь збережена.<br>Ми дуже раді, що ви будете з нами!'
-          : 'Ваша відповідь збережена.<br>Дякуємо, що написали — ми сумуватимемо!';
-    }
-
-    function renderGuestList() {
-      var wrap = document.getElementById('guests-wrap');
-      var rows = document.getElementById('guest-rows');
-      wrap.style.display = 'block';
-      rows.innerHTML = '';
-      var yes = 0, no = 0;
-      localGuests.forEach(function (g) {
-        g.attend === 'yes' ? yes++ : no++;
-        var r = document.createElement('div');
-        r.className = 'guest-row';
-        r.innerHTML =
-          '<div><div class="guest-name">' + g.name + '</div></div>' +
-          '<span class="g-badge ' + (g.attend === 'yes' ? 'g-yes">Так' : 'g-no">Ні') + '</span>';
-        rows.appendChild(r);
+      fetch(CONFIG.sheetsUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(function() {
+        document.getElementById('rsvp-form').style.display = 'none';
+        document.getElementById('success-box').style.display = 'block';
+        document.getElementById('success-text').innerHTML = attend === 'yes' 
+          ? 'Ваша відповідь збережена.<br>Ми дуже раді, що ви будете з нами!' 
+          : 'Ваша відповідь збережена.<br>Дякуємо, що написали!';
+      }).catch(function (e) {
+        showToast('Помилка відправки. Спробуйте ще раз.');
+        btn.disabled = false;
+        btn.textContent = 'Надіслати відповідь';
       });
-      document.getElementById('guests-stats').textContent =
-        'Буде: ' + yes + '  ·  Не зможе: ' + no;
     }
   </script>
-
-  <!-- ═══════════════════════════════════════════════════════════
-
-  📋 ІНСТРУКЦІЯ: ПІДКЛЮЧЕННЯ GOOGLE SHEETS
-
-  1. Відкрий Google Sheets → створи нову таблицю
-  2. Перейди до Extensions → Apps Script
-  3. Встав наступний код у редактор і збережи:
-
-  ─────────────────────────────────────────────────
-
-  function doPost(e) {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    var data  = JSON.parse(e.postData.contents);
-
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow(['Час', "Ім'я", 'Телефон', 'Кількість', 'Їжа', 'Побажання', 'Відповідь']);
-    }
-
-    sheet.appendRow([
-      data.timestamp,
-      data.name,
-      data.phone,
-      data.count,
-      data.food,
-      data.wish,
-      data.attend
-    ]);
-
-    return ContentService
-      .createTextOutput(JSON.stringify({ status: 'ok' }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-
-  ─────────────────────────────────────────────────
-  4. Deploy → New deployment → Web app
-     - Execute as: Me
-     - Who has access: Anyone
-  5. Скопіюй URL деплою
-  6. Встав URL у CONFIG.sheetsUrl на початку HTML файлу
-
-  ═══════════════════════════════════════════════════════════ -->
 
 </body>
 
